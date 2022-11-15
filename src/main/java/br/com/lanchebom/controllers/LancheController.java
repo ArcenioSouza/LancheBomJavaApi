@@ -4,59 +4,82 @@ import br.com.lanchebom.models.dto.request.LancheRequestDto;
 import br.com.lanchebom.models.dto.response.LancheResponseDto;
 import br.com.lanchebom.models.entity.Lanche;
 import br.com.lanchebom.models.repository.LancheRepository;
-import io.swagger.v3.oas.annotations.OpenAPIDefinition;
+import br.com.lanchebom.services.LancheService;
+import br.com.lanchebom.utils.GerarUri;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.info.Contact;
-import io.swagger.v3.oas.annotations.info.Info;
-import io.swagger.v3.oas.annotations.parameters.RequestBody;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import javax.validation.Valid;
+import java.net.URI;
 import java.util.List;
+import java.util.Optional;
 
-@OpenAPIDefinition(
-        info = @Info(
-                title = "LancheBom_API",
-                description = "Api de gerenciamento de pedidos de uma lanchone",
-                version = "1",
-                contact = @Contact(name = "Arcenio Souza", email = "arcenio_neto@icloud.com")
-        )
-)
+
 @RestController
 @RequestMapping("/api/v1/lanche")
 public class LancheController {
 
     @Autowired
     private LancheRepository lancheRepository;
+    private final LancheService lancheService;
+    private final GerarUri gerarUri;
+
+    public LancheController() {
+        this.lancheService = new LancheService();
+        this.gerarUri = new GerarUri();
+    }
+
     @Operation(
-            description = "Salva um lanche no banco de dados",
+            summary = "Salva um lanche no banco de dados",
             responses = {
-                    @ApiResponse(responseCode = "201", description = "Registro criado com sucesso."),
-                    @ApiResponse(responseCode = "500", description = "Problemas com a requisição")
+                    @ApiResponse(responseCode = "201", description = "CREATED", content = @Content(schema = @Schema(hidden = true))),
+                    @ApiResponse(responseCode = "404", description = "NOT FOUND", content = @Content(schema = @Schema(hidden = true))),
+                    @ApiResponse(responseCode = "400", description = "BAD REQUEST", content = @Content(schema = @Schema(hidden = true)))
             }
 
     )
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public LancheResponseDto post(@RequestBody LancheRequestDto lancheRequestDto) {
-        Lanche lanche = lancheRepository.save(new Lanche(lancheRequestDto.getNome(), lancheRequestDto.getPreco()));
-        return new LancheResponseDto(lanche);
+    public ResponseEntity<LancheResponseDto> post(@RequestBody @Valid LancheRequestDto lancheRequestDto) {
+        Lanche lanche = lancheService.save(lancheRepository, lancheRequestDto);
+        URI uri = gerarUri.build("/api/v1/lanche/{id}", lanche.getId());
+        return ResponseEntity.created(uri).body(new LancheResponseDto(lanche));
     }
 
     @Operation(
-            description = "Busca os lanches do banco de dados",
+            summary = "Busca os lanches do banco de dados",
             responses = {
-                    @ApiResponse(responseCode = "200", description = "Busca realizada com sucesso"),
-                    @ApiResponse(responseCode = "404", description = "Não foi encontrado registros no banco")
+                    @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(hidden = true))),
+                    @ApiResponse(responseCode = "404", description = "NOT FOUND", content = @Content(schema = @Schema(hidden = true))),
+                    @ApiResponse(responseCode = "400", description = "BAD REQUEST", content = @Content(schema = @Schema(hidden = true)))
             }
 
     )
     @GetMapping
-    @ResponseStatus(HttpStatus.OK)
-    public List<LancheResponseDto> get() {
-        List<Lanche> listaLanches = lancheRepository.findAll();
-        return LancheResponseDto.buildList(listaLanches);
+    public ResponseEntity<List<LancheResponseDto>> get() {
+        List<Lanche> listaLanches = lancheService.getAll(lancheRepository);
+        return ResponseEntity.ok(LancheResponseDto.buildList(listaLanches));
     }
+
+    @Operation(
+            summary = "Busca um lanche do banco de dados pelo seu id",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(hidden = true))),
+                    @ApiResponse(responseCode = "404", description = "NOT FOUND", content = @Content(schema = @Schema(hidden = true))),
+                    @ApiResponse(responseCode = "400", description = "BAD REQUEST", content = @Content(schema = @Schema(hidden = true)))
+            }
+
+    )
+    @GetMapping("/{id}")
+    public ResponseEntity<LancheResponseDto> getById(@PathVariable int id) {
+        Lanche lanche = lancheService.getOne(lancheRepository, id);
+        return ResponseEntity.ok(new LancheResponseDto(lanche));
+    }
+
 }
