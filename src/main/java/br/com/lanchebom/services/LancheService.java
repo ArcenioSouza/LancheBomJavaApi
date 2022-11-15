@@ -19,4 +19,13 @@ public class LancheService {
     public Lanche getOne(LancheRepository lancheRepository, int id){
         return lancheRepository.getReferenceById(id);
     }
+
+    public Lanche update(LancheRepository lancheRepository, int id, LancheRequestDto lancheRequestDto){
+        Lanche lanche = lancheRepository.getReferenceById(id);
+        lanche.setNome(lancheRequestDto.getNome());
+        lanche.setPreco(lancheRequestDto.getPreco());
+        return lanche;
+    }
+
+
 }
