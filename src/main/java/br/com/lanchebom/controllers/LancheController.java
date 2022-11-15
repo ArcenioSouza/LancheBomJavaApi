@@ -11,6 +11,7 @@ import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -94,6 +95,20 @@ public class LancheController {
     public ResponseEntity<LancheResponseDto> put(@PathVariable int id, @RequestBody @Valid LancheRequestDto lancheRequestDto){
         Lanche lanche = lancheService.update(lancheRepository, id, lancheRequestDto);
         return ResponseEntity.ok(new LancheResponseDto(lanche));
+    }
+    @Operation(
+            summary = "Exclui um lanche do banco de dados",
+            responses = {
+                    @ApiResponse(responseCode = "200", description = "OK", content = @Content(schema = @Schema(hidden = true))),
+                    @ApiResponse(responseCode = "404", description = "NOT FOUND", content = @Content(schema = @Schema(hidden = true))),
+                    @ApiResponse(responseCode = "400", description = "BAD REQUEST", content = @Content(schema = @Schema(hidden = true)))
+            }
+
+    )
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> delete(@PathVariable int id){
+        lancheService.delete(lancheRepository, id);
+        return ResponseEntity.ok().build();
     }
 
 }

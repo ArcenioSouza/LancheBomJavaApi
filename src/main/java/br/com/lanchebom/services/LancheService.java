@@ -28,4 +28,7 @@ public class LancheService {
     }
 
 
+    public void delete(LancheRepository lancheRepository, int id) {
+        lancheRepository.deleteById(id);
+    }
 }
