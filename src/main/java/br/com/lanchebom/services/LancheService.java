@@ -4,7 +4,6 @@ import br.com.lanchebom.models.dto.request.LancheRequestDto;
 import br.com.lanchebom.models.entity.Lanche;
 import br.com.lanchebom.models.repository.LancheRepository;
 import java.util.List;
-import java.util.Optional;
 
 public class LancheService {
 

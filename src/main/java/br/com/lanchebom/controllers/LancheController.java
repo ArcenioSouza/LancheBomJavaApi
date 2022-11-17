@@ -10,8 +10,6 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.http.ResponseEntity;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
@@ -25,14 +23,14 @@ import java.util.List;
 @RequestMapping("/api/v1/lanche")
 public class LancheController {
 
-    @Autowired
-    private LancheRepository lancheRepository;
+    private final LancheRepository lancheRepository;
     private final LancheService lancheService;
     private final GerarUri gerarUri;
 
-    public LancheController() {
+    public LancheController(LancheRepository lancheRepository) {
         this.lancheService = new LancheService();
         this.gerarUri = new GerarUri();
+        this.lancheRepository = lancheRepository;
     }
 
     @Operation(
@@ -96,6 +94,7 @@ public class LancheController {
         Lanche lanche = lancheService.update(lancheRepository, id, lancheRequestDto);
         return ResponseEntity.ok(new LancheResponseDto(lanche));
     }
+
     @Operation(
             summary = "Exclui um lanche do banco de dados",
             responses = {
