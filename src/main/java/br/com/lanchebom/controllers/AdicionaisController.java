@@ -10,8 +10,8 @@ import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.media.Content;
 import io.swagger.v3.oas.annotations.media.Schema;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -84,6 +84,7 @@ public class AdicionaisController {
             }
     )
     @PutMapping("/{id}")
+    @Transactional
     public ResponseEntity<AdicionalResponseDto> put(@RequestBody @Valid AdicionalRequestDto adicionalRequestDto, @PathVariable int id){
         Adicional adicional = adicionalService.update(adicionalRepository, id, adicionalRequestDto);
         return ResponseEntity.ok(new AdicionalResponseDto(adicional));
@@ -98,9 +99,10 @@ public class AdicionaisController {
             }
     )
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable int id){
+    @Transactional
+    public ResponseEntity<String> delete(@PathVariable int id){
         adicionalService.delete(adicionalRepository, id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok("Registro excluido com sucesso");
     }
 
 }

@@ -40,7 +40,6 @@ public class LancheController {
                     @ApiResponse(responseCode = "404", description = "NOT FOUND", content = @Content(schema = @Schema(hidden = true))),
                     @ApiResponse(responseCode = "400", description = "BAD REQUEST", content = @Content(schema = @Schema(hidden = true)))
             }
-
     )
     @PostMapping
     public ResponseEntity<LancheResponseDto> post(@RequestBody @Valid LancheRequestDto lancheRequestDto) {
@@ -105,9 +104,9 @@ public class LancheController {
 
     )
     @DeleteMapping("/{id}")
-    public ResponseEntity<?> delete(@PathVariable int id){
+    public ResponseEntity<String> delete(@PathVariable int id){
         lancheService.delete(lancheRepository, id);
-        return ResponseEntity.ok().build();
+        return ResponseEntity.ok("Registro excluido com sucesso");
     }
 
 }
