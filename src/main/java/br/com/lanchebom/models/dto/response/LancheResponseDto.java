@@ -10,7 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class LancheResponseDto {
-    private int id;
+    private Long id;
     private String nome;
     private BigDecimal preco;
 
@@ -27,11 +27,11 @@ public class LancheResponseDto {
         return lanches.stream().map(LancheResponseDto::new).collect(Collectors.toList());
     }
 
-    public int getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(int id) {
+    public void setId(Long id) {
         this.id = id;
     }
 

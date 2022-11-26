@@ -24,12 +24,10 @@ public class AdicionaisController {
 
     private final AdicionalRepository adicionalRepository;
     private final AdicionalService adicionalService;
-    private final GerarUri gerarUri;
 
     public AdicionaisController(AdicionalRepository adicionalRepository) {
         this.adicionalRepository = adicionalRepository;
         this.adicionalService = new AdicionalService();
-        this.gerarUri = new GerarUri();
     }
 
     @Operation(
@@ -43,7 +41,8 @@ public class AdicionaisController {
     @PostMapping
     public ResponseEntity<AdicionalResponseDto> post(@RequestBody @Valid AdicionalRequestDto adicionalRequestDto){
         Adicional adicional = adicionalService.save(adicionalRepository, adicionalRequestDto);
-        URI uri= gerarUri.build("/api/v1/adicional", adicional.getId());
+        GerarUri gerarUri = new GerarUri();
+        URI uri= gerarUri.build("/api/v1/adicional/{id}", adicional.getId());
         return ResponseEntity.created(uri).body(new AdicionalResponseDto(adicional));
     }
 
@@ -70,7 +69,7 @@ public class AdicionaisController {
             }
     )
     @GetMapping("/{id}")
-    public ResponseEntity<AdicionalResponseDto> getById(@PathVariable int id){
+    public ResponseEntity<AdicionalResponseDto> getById(@PathVariable Long id){
         Adicional adicional = adicionalService.getOne(adicionalRepository, id);
         return ResponseEntity.ok(new AdicionalResponseDto(adicional));
     }
@@ -85,7 +84,8 @@ public class AdicionaisController {
     )
     @PutMapping("/{id}")
     @Transactional
-    public ResponseEntity<AdicionalResponseDto> put(@RequestBody @Valid AdicionalRequestDto adicionalRequestDto, @PathVariable int id){
+    public ResponseEntity<AdicionalResponseDto> put(@RequestBody @Valid AdicionalRequestDto adicionalRequestDto,
+                                                    @PathVariable Long id){
         Adicional adicional = adicionalService.update(adicionalRepository, id, adicionalRequestDto);
         return ResponseEntity.ok(new AdicionalResponseDto(adicional));
     }
@@ -100,7 +100,7 @@ public class AdicionaisController {
     )
     @DeleteMapping("/{id}")
     @Transactional
-    public ResponseEntity<String> delete(@PathVariable int id){
+    public ResponseEntity<String> delete(@PathVariable Long id){
         adicionalService.delete(adicionalRepository, id);
         return ResponseEntity.ok("Registro excluido com sucesso");
     }

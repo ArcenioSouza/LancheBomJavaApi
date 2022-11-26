@@ -15,11 +15,11 @@ public class LancheService {
         return lancheRepository.findAll();
     }
 
-    public Lanche getOne(LancheRepository lancheRepository, int id){
+    public Lanche getOne(LancheRepository lancheRepository, Long id){
         return lancheRepository.getReferenceById(id);
     }
 
-    public Lanche update(LancheRepository lancheRepository, int id, LancheRequestDto lancheRequestDto){
+    public Lanche update(LancheRepository lancheRepository, Long id, LancheRequestDto lancheRequestDto){
         Lanche lanche = lancheRepository.getReferenceById(id);
         lanche.setNome(lancheRequestDto.getNome());
         lanche.setPreco(lancheRequestDto.getPreco());
@@ -27,7 +27,7 @@ public class LancheService {
     }
 
 
-    public void delete(LancheRepository lancheRepository, int id) {
+    public void delete(LancheRepository lancheRepository, Long id) {
         lancheRepository.deleteById(id);
     }
 }

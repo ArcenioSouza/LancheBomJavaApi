@@ -18,11 +18,11 @@ public class AdicionalService {
         return adicionalRepository.findAll();
     }
 
-    public Adicional getOne(AdicionalRepository adicionalRepository, int id){
+    public Adicional getOne(AdicionalRepository adicionalRepository, Long id){
         return adicionalRepository.getReferenceById(id);
     }
 
-    public Adicional update(AdicionalRepository adicionalRepository, int id, AdicionalRequestDto adicionalRequestDto){
+    public Adicional update(AdicionalRepository adicionalRepository, Long id, AdicionalRequestDto adicionalRequestDto){
         Adicional lanche = adicionalRepository.getReferenceById(id);
         lanche.setNome(adicionalRequestDto.getNome());
         lanche.setPreco(adicionalRequestDto.getPreco());
@@ -30,7 +30,7 @@ public class AdicionalService {
     }
 
 
-    public void delete(AdicionalRepository adicionalRepository, int id) {
+    public void delete(AdicionalRepository adicionalRepository, Long id) {
         adicionalRepository.deleteById(id);
     }
 }

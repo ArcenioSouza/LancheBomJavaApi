@@ -25,11 +25,9 @@ public class LancheController {
 
     private final LancheRepository lancheRepository;
     private final LancheService lancheService;
-    private final GerarUri gerarUri;
 
     public LancheController(LancheRepository lancheRepository) {
         this.lancheService = new LancheService();
-        this.gerarUri = new GerarUri();
         this.lancheRepository = lancheRepository;
     }
 
@@ -44,6 +42,7 @@ public class LancheController {
     @PostMapping
     public ResponseEntity<LancheResponseDto> post(@RequestBody @Valid LancheRequestDto lancheRequestDto) {
         Lanche lanche = lancheService.save(lancheRepository, lancheRequestDto);
+        GerarUri gerarUri = new GerarUri();
         URI uri = gerarUri.build("/api/v1/lanche/{id}", lanche.getId());
         return ResponseEntity.created(uri).body(new LancheResponseDto(lanche));
     }
@@ -73,7 +72,7 @@ public class LancheController {
 
     )
     @GetMapping("/{id}")
-    public ResponseEntity<LancheResponseDto> getById(@PathVariable int id) {
+    public ResponseEntity<LancheResponseDto> getById(@PathVariable Long id) {
         Lanche lanche = lancheService.getOne(lancheRepository, id);
         return ResponseEntity.ok(new LancheResponseDto(lanche));
     }
@@ -89,7 +88,7 @@ public class LancheController {
     )
     @PutMapping("/{id}")
     @Transactional
-    public ResponseEntity<LancheResponseDto> put(@PathVariable int id, @RequestBody @Valid LancheRequestDto lancheRequestDto){
+    public ResponseEntity<LancheResponseDto> put(@PathVariable Long id, @RequestBody @Valid LancheRequestDto lancheRequestDto){
         Lanche lanche = lancheService.update(lancheRepository, id, lancheRequestDto);
         return ResponseEntity.ok(new LancheResponseDto(lanche));
     }
@@ -104,7 +103,7 @@ public class LancheController {
 
     )
     @DeleteMapping("/{id}")
-    public ResponseEntity<String> delete(@PathVariable int id){
+    public ResponseEntity<String> delete(@PathVariable Long id){
         lancheService.delete(lancheRepository, id);
         return ResponseEntity.ok("Registro excluido com sucesso");
     }
