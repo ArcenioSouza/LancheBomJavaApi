@@ -38,8 +38,7 @@ public class LancheController {
     @PostMapping
     public ResponseEntity<LancheResponseDto> post(@RequestBody @Valid LancheRequestDto lancheRequestDto) {
         Lanche lanche = lancheService.save(lancheRequestDto);
-        GerarUri gerarUri = new GerarUri();
-        URI uri = gerarUri.build("/api/v1/lanche/{id}", lanche.getId());
+        URI uri = new GerarUri("/api/v1/lanche/{id}", lanche.getId()).build();
         return ResponseEntity.created(uri).body(new LancheResponseDto(lanche));
     }
 

@@ -3,7 +3,6 @@ package br.com.lanchebom.controllers;
 import br.com.lanchebom.models.dto.request.AdicionalRequestDto;
 import br.com.lanchebom.models.dto.response.AdicionalResponseDto;
 import br.com.lanchebom.models.entity.Adicional;
-import br.com.lanchebom.models.repository.AdicionalRepository;
 import br.com.lanchebom.services.AdicionalService;
 import br.com.lanchebom.utils.GerarUri;
 import io.swagger.v3.oas.annotations.Operation;
@@ -21,13 +20,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/adicional")
 public class AdicionaisController {
-
-    private final AdicionalRepository adicionalRepository;
     private final AdicionalService adicionalService;
 
-    public AdicionaisController(AdicionalRepository adicionalRepository) {
-        this.adicionalRepository = adicionalRepository;
-        this.adicionalService = new AdicionalService();
+    public AdicionaisController(AdicionalService adicionalService) {
+        this.adicionalService = adicionalService;
     }
 
     @Operation(
@@ -40,9 +36,8 @@ public class AdicionaisController {
     )
     @PostMapping
     public ResponseEntity<AdicionalResponseDto> post(@RequestBody @Valid AdicionalRequestDto adicionalRequestDto){
-        Adicional adicional = adicionalService.save(adicionalRepository, adicionalRequestDto);
-        GerarUri gerarUri = new GerarUri();
-        URI uri= gerarUri.build("/api/v1/adicional/{id}", adicional.getId());
+        Adicional adicional = adicionalService.save(adicionalRequestDto);
+        URI uri = new GerarUri("/api/v1/adicional/{id}", adicional.getId()).build();
         return ResponseEntity.created(uri).body(new AdicionalResponseDto(adicional));
     }
 
@@ -56,7 +51,7 @@ public class AdicionaisController {
     )
     @GetMapping
     public ResponseEntity<List<AdicionalResponseDto>> get(){
-        List<Adicional> listaAdicionais = adicionalService.getAll(adicionalRepository);
+        List<Adicional> listaAdicionais = adicionalService.getAll();
         return ResponseEntity.ok(AdicionalResponseDto.buildList(listaAdicionais));
     }
 
@@ -70,7 +65,7 @@ public class AdicionaisController {
     )
     @GetMapping("/{id}")
     public ResponseEntity<AdicionalResponseDto> getById(@PathVariable Long id){
-        Adicional adicional = adicionalService.getOne(adicionalRepository, id);
+        Adicional adicional = adicionalService.getOne(id);
         return ResponseEntity.ok(new AdicionalResponseDto(adicional));
     }
 
@@ -86,7 +81,7 @@ public class AdicionaisController {
     @Transactional
     public ResponseEntity<AdicionalResponseDto> put(@RequestBody @Valid AdicionalRequestDto adicionalRequestDto,
                                                     @PathVariable Long id){
-        Adicional adicional = adicionalService.update(adicionalRepository, id, adicionalRequestDto);
+        Adicional adicional = adicionalService.update(id, adicionalRequestDto);
         return ResponseEntity.ok(new AdicionalResponseDto(adicional));
     }
 
@@ -101,7 +96,7 @@ public class AdicionaisController {
     @DeleteMapping("/{id}")
     @Transactional
     public ResponseEntity<String> delete(@PathVariable Long id){
-        adicionalService.delete(adicionalRepository, id);
+        adicionalService.delete(id);
         return ResponseEntity.ok("Registro excluido com sucesso");
     }
 
