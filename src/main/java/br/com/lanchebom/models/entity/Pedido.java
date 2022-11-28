@@ -18,6 +18,15 @@ public class Pedido {
     )
     private List<Adicional> adicionais;
 
+    public Pedido(Lanche lanche, List<Adicional> adicionais) {
+        this.lanche = lanche;
+        this.adicionais = adicionais;
+    }
+
+    public Pedido() {
+
+    }
+
     public Long getId() {
         return id;
     }
