@@ -32,4 +32,8 @@ public class PedidoService {
         Pedido response = pedidoRepository.save(new Pedido(lanche, adicionais));
         return new PedidoResponseDto(response);
     }
+
+    public List<Pedido> findAll() {
+        return pedidoRepository.findAll();
+    }
 }
