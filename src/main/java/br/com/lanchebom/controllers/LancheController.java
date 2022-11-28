@@ -3,7 +3,6 @@ package br.com.lanchebom.controllers;
 import br.com.lanchebom.models.dto.request.LancheRequestDto;
 import br.com.lanchebom.models.dto.response.LancheResponseDto;
 import br.com.lanchebom.models.entity.Lanche;
-import br.com.lanchebom.models.repository.LancheRepository;
 import br.com.lanchebom.services.LancheService;
 import br.com.lanchebom.utils.GerarUri;
 import io.swagger.v3.oas.annotations.Operation;
@@ -22,13 +21,10 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/v1/lanche")
 public class LancheController {
-
-    private final LancheRepository lancheRepository;
     private final LancheService lancheService;
 
-    public LancheController(LancheRepository lancheRepository) {
-        this.lancheService = new LancheService();
-        this.lancheRepository = lancheRepository;
+    public LancheController(LancheService lancheService) {
+        this.lancheService = lancheService;
     }
 
     @Operation(
@@ -41,7 +37,7 @@ public class LancheController {
     )
     @PostMapping
     public ResponseEntity<LancheResponseDto> post(@RequestBody @Valid LancheRequestDto lancheRequestDto) {
-        Lanche lanche = lancheService.save(lancheRepository, lancheRequestDto);
+        Lanche lanche = lancheService.save(lancheRequestDto);
         GerarUri gerarUri = new GerarUri();
         URI uri = gerarUri.build("/api/v1/lanche/{id}", lanche.getId());
         return ResponseEntity.created(uri).body(new LancheResponseDto(lanche));
@@ -58,7 +54,7 @@ public class LancheController {
     )
     @GetMapping
     public ResponseEntity<List<LancheResponseDto>> get() {
-        List<Lanche> listaLanches = lancheService.getAll(lancheRepository);
+        List<Lanche> listaLanches = lancheService.getAll();
         return ResponseEntity.ok(LancheResponseDto.buildList(listaLanches));
     }
 
@@ -73,7 +69,7 @@ public class LancheController {
     )
     @GetMapping("/{id}")
     public ResponseEntity<LancheResponseDto> getById(@PathVariable Long id) {
-        Lanche lanche = lancheService.getOne(lancheRepository, id);
+        Lanche lanche = lancheService.getOne(id);
         return ResponseEntity.ok(new LancheResponseDto(lanche));
     }
 
@@ -89,7 +85,7 @@ public class LancheController {
     @PutMapping("/{id}")
     @Transactional
     public ResponseEntity<LancheResponseDto> put(@PathVariable Long id, @RequestBody @Valid LancheRequestDto lancheRequestDto){
-        Lanche lanche = lancheService.update(lancheRepository, id, lancheRequestDto);
+        Lanche lanche = lancheService.update(id, lancheRequestDto);
         return ResponseEntity.ok(new LancheResponseDto(lanche));
     }
 
@@ -104,7 +100,7 @@ public class LancheController {
     )
     @DeleteMapping("/{id}")
     public ResponseEntity<String> delete(@PathVariable Long id){
-        lancheService.delete(lancheRepository, id);
+        lancheService.delete(id);
         return ResponseEntity.ok("Registro excluido com sucesso");
     }
 
