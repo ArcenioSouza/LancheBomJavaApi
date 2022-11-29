@@ -38,7 +38,6 @@ public class Pedido {
     public void calculaValorPedido(){
         BigDecimal totalAdicional = this.adicionais.stream().map(Adicional::getPreco).reduce(BigDecimal::add).orElse(BigDecimal.ZERO);
         BigDecimal total = totalAdicional.add(lanche.getPreco());
-
         //Usar o chain of responsibility aqui!!!
         switch (this.adicionais.size()) {
             case 0 -> this.valorTotal = calcularValorComDesconto(total, new AdicionaisIgualZero());
